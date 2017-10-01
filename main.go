@@ -1,7 +1,8 @@
 package main
 
-import "blockchain/restserver"
+import "blockchain/chain"
 
 func main() {
-	restserver.Setup()
+	chain.Setup()
+	// go restserver.Setup()
 }

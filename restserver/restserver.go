@@ -13,15 +13,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var bc *chain.Blockchain
-
 func Setup() {
-	if bc != nil {
-		log.Println("Blockchain is already setup")
-		return
-	}
-	bc = chain.NewBlockchain()
-	log.Println("Blockchain is initialized")
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8000"
@@ -39,7 +31,7 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "Welcome to MJS Blockchain. Check out https://mjs-blockchain.herokuapp.com/blocks for all block data. To add a block, run a curl command to /add. Ex: curl -X POST -d '{'Data':'hello world'}' http://localhost:8000/add")
 }
 func GetBlocksHandler(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(bc.Blocks)
+	json.NewEncoder(w).Encode(chain.BC.Blocks)
 }
 
 type NewBlockData struct {
@@ -58,8 +50,8 @@ func AddBlockHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), 400)
 			return
 		}
-		bc.AddBlock(blockData.Data)
-		json.NewEncoder(w).Encode(bc.Blocks[len(bc.Blocks)-1])
+		chain.BC.AddBlock(blockData.Data)
+		json.NewEncoder(w).Encode(chain.BC.Blocks[len(chain.BC.Blocks)-1])
 	} else {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 	}
