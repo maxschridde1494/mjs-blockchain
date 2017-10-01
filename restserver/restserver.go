@@ -36,7 +36,7 @@ func Setup() {
 }
 
 func RootHandler(w http.ResponseWriter, r *http.Request) {
-	io.WriteString(w, "Welcome to MJS Blockchain. Check out https://mjs-blockchain.herokuapp.com/blocks for all block data.")
+	io.WriteString(w, "Welcome to MJS Blockchain. Check out https://mjs-blockchain.herokuapp.com/blocks for all block data. To add a block, run a curl command to /add. Ex: curl -X POST -d '{'Data':'hello world'}' http://localhost:8000/add")
 }
 func GetBlocksHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(bc.Blocks)
