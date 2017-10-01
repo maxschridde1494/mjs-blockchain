@@ -2,6 +2,7 @@ package restserver
 
 import (
 	"encoding/json"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -26,6 +27,7 @@ func Setup() {
 		port = "8000"
 	}
 	r := mux.NewRouter()
+	r.HandleFunc("/", RootHandler)
 	r.HandleFunc("/blocks", GetBlocksHandler)
 	r.HandleFunc("/add", AddBlockHandler)
 	loggedRouter := handlers.LoggingHandler(os.Stdout, r)
@@ -33,6 +35,9 @@ func Setup() {
 	http.ListenAndServe(":"+port, loggedRouter)
 }
 
+func RootHandler(w http.ResponseWriter, r *http.Request) {
+	io.WriteString(w, "Welcome to MJS Blockchain. Check out https://mjs-blockchain.herokuapp.com/blocks for all block data.")
+}
 func GetBlocksHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(bc.Blocks)
 }
