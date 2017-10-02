@@ -2,10 +2,14 @@ package main
 
 import (
 	"blockchain/chain"
-	"blockchain/restserver"
+	"blockchain/cli"
 )
 
 func main() {
-	chain.Setup()
-	restserver.Setup()
+	bc := chain.NewBlockchain()
+	defer bc.Db.Close()
+
+	commandLine := cli.CLI{bc}
+	commandLine.Run()
+	// restserver.Setup()
 }

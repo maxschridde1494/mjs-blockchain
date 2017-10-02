@@ -8,26 +8,26 @@ import (
 )
 
 type Blockchain struct {
-	tip []byte
-	db  *bolt.DB
+	Tip []byte
+	Db  *bolt.DB
 }
 
 const blockBucket = "BlockBucket"
 
-var BC *Blockchain
+// var BC *Blockchain
 
-func Setup() {
-	if BC != nil {
-		log.Println("Blockchain is already setup")
-		return
-	}
-	BC = NewBlockchain()
-	log.Println("Blockchain is initialized")
-}
+// func Setup() {
+// 	if BC != nil {
+// 		log.Println("Blockchain is already setup")
+// 		return
+// 	}
+// 	BC = NewBlockchain()
+// 	log.Println("Blockchain is initialized")
+// }
 
 func (bc *Blockchain) AddBlock(data string) {
 	var lastHash []byte
-	err := bc.db.View(func(tx *bolt.Tx) error {
+	err := bc.Db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(blockBucket))
 		lastHash = b.Get([]byte("l"))
 		return nil
@@ -36,7 +36,7 @@ func (bc *Blockchain) AddBlock(data string) {
 		log.Println("Error in AddBlock grabbing last hash.")
 	} else {
 		newBlock := block.NewBlock(data, lastHash)
-		err = bc.db.Update(func(tx *bolt.Tx) error {
+		err = bc.Db.Update(func(tx *bolt.Tx) error {
 			b := tx.Bucket([]byte(blockBucket))
 			err := b.Put(newBlock.Hash, newBlock.Serialize())
 			if err != nil {
@@ -44,7 +44,7 @@ func (bc *Blockchain) AddBlock(data string) {
 				return err
 			}
 			err = b.Put([]byte("l"), newBlock.Hash)
-			bc.tip = newBlock.Hash
+			bc.Tip = newBlock.Hash
 			log.Println("Added new block with data: %s", data)
 			return nil
 		})
@@ -87,7 +87,7 @@ type BlockchainIterator struct {
 }
 
 func (bc *Blockchain) Iterator() *BlockchainIterator {
-	bci := &BlockchainIterator{bc.tip, bc.db}
+	bci := &BlockchainIterator{bc.Tip, bc.Db}
 	return bci
 }
 
